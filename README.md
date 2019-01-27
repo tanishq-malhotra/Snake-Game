@@ -5,8 +5,11 @@ executing the rest code.
 Controls:-
 
 w - UP
+
 s - DOWN
+
 a - LEFT
+
 d - RIGHT
 
 Rest Explanation is given along side with code.
