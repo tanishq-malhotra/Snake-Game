@@ -1,286 +1,274 @@
-#include <bits/stdc++.h>
-//for using the kbhit function
-#include <conio.h>
-using namespace std;
+#include "snake.hpp"
 
-//snake class
-class Snake
+Snake::Snake() {}
+//parameterised constructor to set value's
+Snake::Snake(int n, int m):r(n),c(m),tailC(0),sc(0),x(10),y(3)
 {
-public:
-//defining row, column, headx and heady
-int r, c, x, y;
+	s = "r";
+	//creating grid and storing stage in grid
+    grid = pat2grid(r, c);
 
-//food x and y coordinates
-int fx,fy;
-
-//used to quit the game
-bool gameover = true;
-
-//for storing snake's x and y coordinates
-int *sx, *sy;
-
-//counter to check the tail's length
-int tailC;
-
-//to check for snake's previous direction
-string s;
-
-//Score
-int sc;
-//default constructor
-  Snake(){}
-
-  //parameterised constructor to set value's
-  Snake(int n , int m): r(n), c(m), tailC(1), sc(0)
-  {
-  	//allocating memory to snake's array
-  	sx = new int [100];
-  	sy = new int [100];
-
-  	//for generating a random position for the snake's head
-  	redo:
-  	x = rand() % r;
-  	y = rand() % c;
-
-  	//if the coordinates are zero then we will generate coordinates again
-  	if(x == 0 || y == 0)
-  		goto redo;
-
+    sx = new int[100];
+    sy = new int[100];
   	//used to generate food
   	food_random();
-  }
+}
 
-  //generating food at random position
-  void food_random()
-  {
-  	//if the coordinates are zero then we will generate coordinates again
-  	re:
-  		fx = rand() % (r - 2);
-  		fy = rand() % (c - 5);
-  	if (fx == 0 || fy == 0)
-  		goto re;
+//generating food at random position
+void Snake::food_random()
+{
+//if the coordinates are zero then we will generate coordinates again
+  re:
+    fx = rand() % (r);
+    fy = rand() % (c);
+    //if fx = 0 and fy = 0 then goto re
+    if (fx == 0 || fy == 0)
+      goto re;
     else
     {
+     //if fx and fy matches with the coordinates of the tail
       for(int i = 0; i < tailC; i++)
         if(fx == sx[i] || fy == sy[i])
           goto re;
     }
-  }
+//if food coordinates matches with the coordinates of the pattern in grid
+   for(int i = 0; i < r; i++)
+    {
+     for(int j = 0; j < c; j++)
+      {
+       if(grid[i][j] == '#' && i == fx && j == fy)
+        {
+          fx = rand() % (r); fy = rand() % (c);
+        }
+      }
+    }
+}
 
 //printing the main game
-  void Print()
+void Snake::Print()
+{
+//clear screen
+ system("cls");
+//main loop
+ for (int i = 0; i < r ; i++)
   {
-  	//clear screen
-	system("cls");
-
-	//main loop
-	for (int i = 0; i < r ; i++)
-     {
-      for (int j = 0; j < c; j++)
-      	{
-      		//defining border
-	        if(i == 0 || j == c - 1 || i == r - 1 || j == 0 ) cout<<'#';
-	        else
-	        {
-	        	//printing food
-	        	if(i == fx && j == fy) cout<<"F";
-
-	        	//printing head
-	        	else if(i == x && j == y) cout<<'O';
-	        	else
-	        	{
-	        		//flag used for printing space if there is no tail
-	        		int f = 0;
-
-	        		//loop for iterating the snake array
-	        		for(int k = 0; k < tailC; k++)
-	        		{
-	        			//if coordinates matches then print the tail and set flag to 1
-	        			if(sx[k] == i && sy[k] == j)
-	        			{
-	        				f = 1; cout<<"*";
-	        			}
-	        		}
-	        		//if flag is zero, we print space
-	        		if(f == 0) cout<<' ';
-	        	}
-	        }
-    	}
-    //printing new line
-      cout<<endl;
+   for (int j = 0; j < c; j++)
+    {
+     //printing grid
+	 cout<<grid[i][j];
+	 //printing food
+	 if(i == fx && j == fy) cout<<"F";
+     //printing head of snake
+	 else if(i == x && j == y) cout<<'O';
+	 else
+	  {
+	 //flag used for printing space if there is no tail
+	   int f = 0;
+     //loop for iterating the snake array
+	   for(int k = 0; k < tailC; k++)
+	    {
+	   //if coordinates matches then print the tail and set flag to 1
+	      if(sx[k] == i && sy[k] == j)
+	       {
+	        f = 1; cout<<"*";
+	       }
+	    }
+	   //if flag is zero, we print space
+	    if(f == 0) cout<<' ';
+	   }
     }
-  }
+//printing new line
+  cout<<endl;
+    }
+}
 
-  //display score
-  void display_score()
-  {
-    cout<<endl<<endl<<"Score: "<<sc;
-  }
+//display score
+void Snake::display_score()
+{
+cout<<endl<<endl<<"Score: "<<sc;
+}
 
 //function to update the values of the tail's position
-  void moveTail()
-  {
-  	//storing the initial coordinates of the tail
-  	int tempx = sx[0], tempy = sy[0], tx, ty;
-
-  	//assigning new coordinates to the tail
-    sx[0] = x; sy[0] = y;
-
-    //loop used to shift the coordinates to the previous tail's
-	 for(int i = 1; i < tailC; i++)
-	  	{
-	  		//storing the coodintes of the next tail
-	  		tx = sx[i]; ty = sy[i];
-
-	  		//assigning new coordinates to the tail
-	  		sx[i] = tempx; sy[i] = tempy;
-	  		
-	  		//updating the value of the temp variables
-	  		tempx = tx; tempy = ty;
-	  	}
+void Snake::moveTail()
+{
+//storing the initial coordinates of the tail
+int tempx = sx[0], tempy = sy[0], tx, ty;
+//assigning new coordinates to the tail
+sx[0] = x; sy[0] = y;
+//loop used to shift the coordinates to the previous tail's
+for(int i = 1; i < tailC; i++)
+ {
+//storing the coodintes of the next tail
+   tx = sx[i]; ty = sy[i];
+ //assigning new coordinates to the tail
+   sx[i] = tempx; sy[i] = tempy;
+//updating the value of the temp variables
+    tempx = tx; tempy = ty;
   }
+}
 
-  //to check the collostion of snake with the wall
-  void checkWallCollosition()
-  {
-  	//if x and y touches the boundary
-  	if(x == 0 || x == r - 1 || y == 0 || y == c - 1)
-    {
-      cout<<endl<<"Snake Hit's The boundary";
-  		gameover = false;
-    }
-  }
+//to check the collision of snake with the wall
+void Snake::checkWallCollision()
+{
+//if x and y touches the boundary
+if(x == 0 || x == r - 1 || y == 0 || y == c - 1)
+	gameover = false;
+else
+{
+  for(int i = 0; i < r; i++)
+   {
+    for(int j = 0; j < c; j++)
+     {
+       if(grid[i][j] == '#' && i == x && j == y)
+            gameover = false;
+     }
+   } 
+}
+}
 
-  //to check the collision of food and snake
-  void eatFood()
-  {
-  	//if the coordinates of the head matches with the coordinates of the food
-  	if(x == fx && y == fy)
-  	{
-      //if collision then increment the score
-      sc += 10;
-  		//to generate new food at a new random position
-  		food_random();
-  		//incrementing the counter means adding new tail
-  		tailC += 1;
-  	}
-  }
+//to check the collision of food and snake
+void Snake::eatFood()
+{
+//if the coordinates of the head matches with the coordinates of the food
+if(x == fx && y == fy)
+{
+//if collision then increment the score
+  sc += 10;
+//to generate new food at a new random position
+food_random();
+//incrementing the counter means adding new tail
+tailC += 1;
+}
+}
 
 //to check if snake snake hits itself or not
-  void checkHitItself()
-  {
-  	//iterate through the snake array
-  	for(int i = 1; i < tailC; i++)
-  		//if array coordinates matches the position of head
-  		if(sx[i] == x && sy[i] == y)
-      { 
-        cout<<endl<<"Snake Hit Itsef at tail number:"<<i - 1<<endl;
-         gameover = false;
-       }
-  }
+void Snake::checkHitItself()
+{
+//iterate through the snake array
+  for(int i = 1; i < tailC; i++)
+  //if array coordinates matches the position of head
+  	if(sx[i] == x && sy[i] == y)
+     gameover = false;
+}
 
 //moving snake up
-  void up()
+void Snake::up()
+{
+ while(gameover && s == "u")
   {
-  	//if s is down then it will not move up
-  	if(s != "d")
-  	{
+  //if s is down then it will not move up
   	x -= 1;
-  	s = "u";
   	//function's called
-  	checkWallCollosition();
+    Print();
+    display_score();
+    input();
+  	checkWallCollision();
   	eatFood();
   	moveTail();
-    checkHitItself();
-	}
+    checkHitItself();   
   }
+}
 
 //moving snake down
-  void down()
-  {
-  	//if s is up the it will not move down
-  	if(s != "u")
-  	{
+void Snake::down()
+{
+  while(gameover && s == "d")
+   {
+  	//if s is up the it will not move down  	
   	x += 1;
-  	s = "d";
-  	checkWallCollosition();
+    Print();
+    display_score();
+    input();
+  	checkWallCollision();
   	eatFood();
   	moveTail();
   	checkHitItself();
   }
-  }
+}
 
 //moving snake left
-  void left()
-  {
+void Snake::left()
+{
+ while(gameover && s == "l")
+ {
   	//if s is right then it will not move left
-  	if(s != "r")
-  	{
   	y -= 1;
-  	s = "l";
-  	checkWallCollosition();
+    Print();
+    display_score();
+    input();
+  	checkWallCollision();
   	eatFood();
   	moveTail();
   	checkHitItself();
-  }
-  }
+ }
+}
 
 //moving snake right
-  void right()
-  {
-  	//if s is left then it will not move right
-  	if(s != "l")
-  	{
-  	y += 1;
-  	s = "r";
-  	checkWallCollosition();
-  	eatFood();
-  	moveTail();
-  	checkHitItself();
+void Snake::right()
+{
+ while(gameover && s == "r")
+ {
+//if s is left then it will not move right
+  y += 1;   
+  Print();
+  display_score();
+  input();
+ checkWallCollision();
+ eatFood();
+ moveTail();
+ checkHitItself();    
   }
-  }
+}
 
 //function which takes the input
-  void input()
-  {
-  	//function used to continue the while loop and taking inputs
-  	if(kbhit())
-  	{
-  		//getch takes the input and switch assign's the case
-  		switch(getch())
-  		{
-  			//various cases
-  			case 'w' : up(); break;
-
-  			case 's' : down(); break;
-  					   
-  			case 'a' : left(); break;
-  					    
-  			case 'd' : right(); break;
-  					    
-			case 'q' : gameover = false; break;
-  		}
-  	}
-  }
-};
-
-//main function
-int main()
+void Snake::input()
 {
-//function which matches the system time and generates different random values
-  srand (time(NULL));
-
-  //snake class object
-  Snake s(20,50);
-
-  //main loop to continue the game
-  while(s.gameover)
+//function used to continue the while loop and taking inputs
+if(kbhit())
+ {
+//getch takes the input and switch assign's the case
+  switch(getch())
   {
-  	//print functin called
-	  s.Print();
-    s.display_score();
-	  //input function called
-	  s.input();
+  //various cases
+  case 'w' : if(s != "d"){
+             s = "u"; up(); break;
+             }
+             else break;
+                  
+  case 's' : if(s != "u"){
+             s = "d"; down(); break;
+             }
+              else break;
+  					   
+  case 'a' : if(s != "r"){
+             s = "l"; left(); break;
+             }
+             else break;
+                    	    
+  case 'd' : if(s != "l"){
+              s = "r"; right(); break;
+              }
+              else break;
+                  
+  case 'q' : gameover = false; break;
   }
-  return 0;
+ }
+}
+
+char** Snake::pat2grid(int r,int c)
+{
+char **grid = new char*[r];
+for(int i = 0; i < r; i++) grid[i] = new char [c];
+fstream file;
+file.open("pattern.txt");
+string line;
+int i = 0, j = 0;
+while(getline(file,line))
+{
+ for(j = 0; j < line.length(); j++)
+	grid[i][j] = (char)line[j];
+	i++;
+}
+file.close();
+return grid;
 }
