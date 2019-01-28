@@ -14,3 +14,7 @@ d - RIGHT
 
 Rest Explanation is given along side with code.
 Screen Slutter Due to the clear function. 
+
+To compile use this command in terminal:-
+
+g++ *.cpp -o main
