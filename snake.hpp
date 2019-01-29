@@ -3,6 +3,7 @@
 #include<conio.h>
 #include<windows.h>
 using namespace std;
+//handle declared, extern is used because it is a global variable
 extern HANDLE hOut;
 class Snake
 {

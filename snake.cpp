@@ -1,4 +1,5 @@
 #include "snake.hpp"
+//handle created, used to clear the screen
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 Snake::Snake() {}
 //parameterised constructor to set value's
@@ -21,7 +22,7 @@ void Snake::food_random()
   re:
     fx = rand() % (r);
     fy = rand() % (c);
-    //if fx = 0 and fy = 0 then goto re
+    //if fx = 0 and fy = 0 or is with border then goto re
     if (fx == 0 || fy == 0 || fx == r - 1 || fy == c - 1 || fx > r || fy > c)
       goto re;
      //if fx and fy matches with the coordinates of the tail
@@ -48,7 +49,7 @@ void Snake::food_random()
 //printing the main game
 void Snake::Print()
 {
-//clear screen
+//clear screen by setting the cursor back to 0,0 coordinates
  SetConsoleCursorPosition(hOut, {0,0});
 //main loop
  for (int i = 0; i < r ; i++)
@@ -71,6 +72,7 @@ void Snake::Print()
 	   //if coordinates matches then print the tail and set flag to 1
 	      if(sx[k] == i && sy[k] == j)
 	       {
+          
 	        f = 1; cout<<"*";
 	       }
 	    }
