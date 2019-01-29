@@ -1,8 +1,9 @@
 #include<bits/stdc++.h>
 #include<fstream>
 #include<conio.h>
+#include<windows.h>
 using namespace std;
-
+extern HANDLE hOut;
 class Snake
 {
 public:

@@ -1,5 +1,5 @@
 #include "snake.hpp"
-
+HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 Snake::Snake() {}
 //parameterised constructor to set value's
 Snake::Snake(int n, int m):r(n),c(m),tailC(0),sc(0),x(10),y(3)
@@ -22,15 +22,16 @@ void Snake::food_random()
     fx = rand() % (r);
     fy = rand() % (c);
     //if fx = 0 and fy = 0 then goto re
-    if (fx == 0 || fy == 0)
+    if (fx == 0 || fy == 0 || fx == r - 1 || fy == c - 1 || fx > r || fy > c)
       goto re;
-    else
-    {
      //if fx and fy matches with the coordinates of the tail
       for(int i = 0; i < tailC; i++)
         if(fx == sx[i] || fy == sy[i])
-          goto re;
-    }
+          {
+            fx = rand() % (r);
+            fy = rand() % (c);
+          }
+    
 //if food coordinates matches with the coordinates of the pattern in grid
    for(int i = 0; i < r; i++)
     {
@@ -48,7 +49,7 @@ void Snake::food_random()
 void Snake::Print()
 {
 //clear screen
- system("cls");
+ SetConsoleCursorPosition(hOut, {0,0});
 //main loop
  for (int i = 0; i < r ; i++)
   {
