@@ -9,8 +9,8 @@ Snake::Snake(int n, int m):r(n),c(m),tailC(0),sc(0),x(10),y(3)
 	//creating grid and storing stage in grid
     grid = pat2grid(r, c);
 
-    sx = new int[100];
-    sy = new int[100];
+    sx = new int[101];
+    sy = new int[101];
   	//used to generate food
   	food_random();
 }
@@ -72,7 +72,6 @@ void Snake::Print()
 	   //if coordinates matches then print the tail and set flag to 1
 	      if(sx[k] == i && sy[k] == j)
 	       {
-          
 	        f = 1; cout<<"*";
 	       }
 	    }
@@ -161,6 +160,7 @@ void Snake::up()
 {
  while(gameover && s == "u")
   {
+    Sleep(50);
   //if s is down then it will not move up
   	x -= 1;
   	//function's called
@@ -180,6 +180,7 @@ void Snake::down()
 {
   while(gameover && s == "d")
    {
+    Sleep(50);
   	//if s is up the it will not move down  	
   	x += 1;
     Print();
@@ -198,6 +199,7 @@ void Snake::left()
 {
  while(gameover && s == "l")
  {
+  Sleep(50);
   	//if s is right then it will not move left
   	y -= 1;
     Print();
@@ -216,6 +218,7 @@ void Snake::right()
 {
  while(gameover && s == "r")
  {
+  Sleep(50);
 //if s is left then it will not move right
   y += 1;   
   Print();
