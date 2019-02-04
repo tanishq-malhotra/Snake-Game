@@ -39,6 +39,8 @@ void display_score();
 void moveTail();
 //to check the collision of snake with the wall
 void checkWallCollision();
+//pass through wall
+void passThroughWall();
 //to check the collision of food and snake
 void eatFood();
 //to check if snake snake hits itself or not

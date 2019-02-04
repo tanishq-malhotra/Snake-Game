@@ -113,22 +113,24 @@ for(int i = 1; i < tailC; i++)
 //to check the collision of snake with the wall
 void Snake::checkWallCollision()
 {
-//if x and y touches the boundary
-if(x == 0 || x == r - 1 || y == 0 || y == c - 1)
-	gameover = false;
-else
-{
   for(int i = 0; i < r; i++)
    {
     for(int j = 0; j < c; j++)
      {
-       if(grid[i][j] == '#' && i == x && j == y)
+       if(grid[i][j] == '#' && i == x && j == y && (i != 0 && i != r - 1 && j != 0 && j != c - 1))
             gameover = false;
      }
    } 
 }
-}
 
+//pass through wall
+void Snake::passThroughWall()
+{
+  if(y == c - 1) y = 0;
+  else if(y == 0) y = c - 1;
+  else if (x == 0) x = r - 1;
+  else if(x == r - 1) x = 0;
+}
 //to check the collision of food and snake
 void Snake::eatFood()
 {
@@ -163,6 +165,7 @@ void Snake::up()
   	x -= 1;
   	//function's called
     Print();
+    passThroughWall();
     display_score();
     input();
   	checkWallCollision();
@@ -181,6 +184,7 @@ void Snake::down()
   	x += 1;
     Print();
     display_score();
+    passThroughWall();
     input();
   	checkWallCollision();
   	eatFood();
@@ -198,6 +202,7 @@ void Snake::left()
   	y -= 1;
     Print();
     display_score();
+    passThroughWall();
     input();
   	checkWallCollision();
   	eatFood();
@@ -215,6 +220,7 @@ void Snake::right()
   y += 1;   
   Print();
   display_score();
+  passThroughWall();
   input();
  checkWallCollision();
  eatFood();
